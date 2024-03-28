@@ -2,6 +2,9 @@
 
 Example Nixos-setups based on [nixos-containers](https://github.com/johannesloetzsch/containers).
 
+![church of nixos logo](.img/church-of-nixos.png)
+
+
 ## Install
 
 Using `NixOS ≥ 21.11`, the host system only requires one config option to run the examples from this repo:
