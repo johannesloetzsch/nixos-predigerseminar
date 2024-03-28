@@ -2,10 +2,22 @@
 
 Example Nixos-setups based on [nixos-containers](https://github.com/johannesloetzsch/containers).
 
+## Install
 
-## Nextcloud
+Using `NixOS ≥ 21.11`, the host system only requires one config option to run the examples from this repo:
 
-### [nextcloud-simple-insecure](./nix/nextcloud-simple-insecure)
+```nix
+programs.extra-container.enable = true;
+```
+
+For other systemd-based Linux distros: [RTFM](https://github.com/erikarvstedt/extra-container#install) ;)
+
+
+## Examples
+
+### Nextcloud
+
+#### [nextcloud-simple-insecure](./nix/nextcloud-simple-insecure)
 
 Minimal Nextcloud setup based on [https://nixos.wiki/wiki/Nextcloud](https://nixos.wiki/wiki/Nextcloud).
 
