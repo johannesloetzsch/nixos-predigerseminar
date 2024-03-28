@@ -33,11 +33,11 @@
           config.containers."${containerName}" = containerConfig;
         });
 
-    buildContainer_ = lib.attrsets.mapAttrs' buildContainerFromContainerConfigs (import ./nix/containers.nix).containers;
+    buildContainer_ = lib.attrsets.mapAttrs' buildContainerFromContainerConfigs (import ./nix/nextcloud-simple-insecure/containers.nix).containers;
 
   in rec {
     
-    nixosConfigurations = builtins.mapAttrs nixosConfigurationsFromContainerConfigs (import ./nix/containers.nix).containers;
+    nixosConfigurations = builtins.mapAttrs nixosConfigurationsFromContainerConfigs (import ./nix/nextcloud-simple-insecure/containers.nix).containers;
 
     packages."${system}" =
 
@@ -48,7 +48,7 @@
       buildContainers = extra-container.lib.buildContainers {
         inherit system;
         inherit nixpkgs;
-        config = (import ./nix/containers.nix);
+        config = (import ./nix/nextcloud-simple-insecure/containers.nix);
       };
 
       default = buildContainers;
