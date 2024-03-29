@@ -1,6 +1,6 @@
-# Nixos Predigerseminar
+# NixOS Predigerseminar
 
-Example Nixos-setups based on [nixos-containers](https://github.com/johannesloetzsch/containers).
+Example NixOS-setups based on [nixos-containers](https://github.com/johannesloetzsch/containers).
 
 ![church of nixos logo](.img/church-of-nixos.png)
 
@@ -48,7 +48,7 @@ You can control the machines with `machinectl`:
 
 machinectl list
 
-machinectl start $NAME
+machinectl shell $NAME
 machinectl poweroff $NAME
 
 machinectl --help
@@ -82,3 +82,33 @@ nix run github:johannesloetzsch/nixos-predigerseminar#buildContainer_nextcloud0
 User: `root`
 
 Password: `nix`
+
+#### [nextcloud-sops](./nix/nextcloud-sops)
+
+This setups differs from `nextcloud-simple-insecure` by using an [sops-encrypted](./sops/README.md) password 🤩
+
+Only the users and hosts with the keys defined at `.sops.yaml` are able to decrypt `sops/secrets/nextcloud/root-password`.
+
+To use this example:
+```bash
+## 1. create your own key
+mkdir -p ~/.config/sops/age
+nix shell nixpkgs#age --run age-keygen -o ~/.config/sops/age/keys.txt
+
+## 2. copy it to the container
+sudo cp ~/.config/sops/age/keys.txt /var/lib/nixos-containers/nextcloud1/root/sops.age
+
+## 3. add the public key to `.sops.yaml`
+
+## 4. change and reencrypt the password file
+nix run nixpkgs#sops sops/secrets/nextcloud/root-password
+```
+
+
+```bash
+nix run .#buildContainer_nextcloud1
+# or
+nix run github:johannesloetzsch/nixos-predigerseminar#buildContainer_nextcloud1
+```
+
+[http://192.0.2.21](http://192.0.2.21)

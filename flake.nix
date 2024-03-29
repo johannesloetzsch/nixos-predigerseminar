@@ -2,9 +2,13 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-23.11";
     extra-container.url = "github:erikarvstedt/extra-container";
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, extra-container, ... }:
+  outputs = { self, nixpkgs, extra-container, sops-nix, ... }:
   let
     system = "x86_64-linux";
     pkgs = nixpkgs.legacyPackages.${system};
@@ -15,6 +19,7 @@
     nixosConfigurationsFromContainerConfigs = containerName: containerConfig:
       nixpkgs.lib.nixosSystem {
         inherit system;
+        specialArgs = { inherit sops-nix; };
         modules = [
           {
             boot.isContainer = true;
@@ -30,25 +35,33 @@
         (extra-container.lib.buildContainers {
           inherit system;
           inherit nixpkgs;
-          config.containers."${containerName}" = containerConfig;
+          config.containers."${containerName}" = containerConfig //
+          {
+            specialArgs = {inherit sops-nix;};
+          };
         });
 
-    buildContainer_ = lib.attrsets.mapAttrs' buildContainerFromContainerConfigs (import ./nix/nextcloud-simple-insecure/containers.nix).containers;
+    containerConfigsWithSpecialArgs = containerName: containerConfig:
+      containerConfig //
+      {
+        specialArgs = {inherit sops-nix;};
+      };
 
-  in rec {
-    
-    nixosConfigurations = builtins.mapAttrs nixosConfigurationsFromContainerConfigs (import ./nix/nextcloud-simple-insecure/containers.nix).containers;
+    containerConfigs = lib.attrsets.mergeAttrsList (map (x: x.containers) [ (import ./nix/nextcloud-simple-insecure/containers.nix)
+                                                                            (import ./nix/nextcloud-sops/containers.nix) ]);
 
-    packages."${system}" =
+    buildContainer_ = lib.attrsets.mapAttrs' buildContainerFromContainerConfigs containerConfigs;
 
-      buildContainer_ //
+  in {
+  
+    nixosConfigurations = builtins.mapAttrs nixosConfigurationsFromContainerConfigs containerConfigs;
 
-    rec {
+    packages."${system}" = buildContainer_ // rec {
 
       buildContainers = extra-container.lib.buildContainers {
         inherit system;
         inherit nixpkgs;
-        config = (import ./nix/nextcloud-simple-insecure/containers.nix);
+        config.containers = builtins.mapAttrs containerConfigsWithSpecialArgs containerConfigs;
       };
 
       default = buildContainers;

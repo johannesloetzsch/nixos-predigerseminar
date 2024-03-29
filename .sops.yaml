@@ -1,0 +1,7 @@
+keys:
+  - &j03 age1vq32x5993s9hzlhutq9v0k9knnmx2ddvxnvvshll4eh9ex9yw4sskt4xu8
+creation_rules:
+  - path_regex: sops/secrets/.*
+    key_groups:
+    - age:
+      - *j03
