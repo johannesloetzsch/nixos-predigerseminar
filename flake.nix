@@ -48,7 +48,8 @@
       };
 
     containerConfigs = lib.attrsets.mergeAttrsList (map (x: x.containers) [ (import ./nix/nextcloud-simple-insecure/containers.nix)
-                                                                            (import ./nix/nextcloud-sops/containers.nix) ]);
+                                                                            (import ./nix/nextcloud-sops/containers.nix)
+                                                                            (import ./nix/nextcloud-apps/containers.nix) ]);
 
     buildContainer_ = lib.attrsets.mapAttrs' buildContainerFromContainerConfigs containerConfigs;
 

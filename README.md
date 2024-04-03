@@ -112,3 +112,20 @@ nix run github:johannesloetzsch/nixos-predigerseminar#buildContainer_nextcloud1
 ```
 
 [http://192.0.2.21](http://192.0.2.21)
+
+#### [nextcloud-apps](./nix/nextcloud-sop)
+
+Like [nextcloud-sops](#nextcloud-sops), but with some Nextcloud-Apps.
+
+This configuration shows, how to use arbitrary Apps from the [Nextcloud App Store](https://apps.nextcloud.com).
+
+For this demo we use nextcloud as a `Solid pod server` 🤩
+
+
+```bash
+nix run .#buildContainer_nextcloud2
+# or
+nix run github:johannesloetzsch/nixos-predigerseminar#buildContainer_nextcloud2
+```
+
+[http://192.0.2.22/apps/solid](http://192.0.2.22/apps/solid)
